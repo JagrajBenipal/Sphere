@@ -5,12 +5,15 @@ import gsap from "gsap";
 
 const textureLoader=new THREE.TextureLoader()
 
-const texture = textureLoader.load("textures/lava.jpg");
+const texture = textureLoader.load("./static/images/lava.jpg");
 
 const cursor={
   x:0,
   y:0
 }
+
+
+
 
 texture.minFilter = THREE.NearestFilter;
 texture.magFilter = THREE.NearestFilter;
@@ -27,6 +30,7 @@ const scene = new THREE.Scene();
 const material = new THREE.MeshStandardMaterial({
   map: texture,
   roughness: 0.1,
+  emissiveIntensity: 1, // Intensity of emissive light
 });
 material.displacementMap = texture;
 material.displacementScale = -6;
@@ -38,7 +42,7 @@ const mesh = new THREE.Mesh(
 scene.add(mesh);
 
 const light = new THREE.PointLight(0xffffff, 70, 100, 1.7);
-light.position.set(10, 10, 10);
+light.position.set(2, 2, 2);
 scene.add(light);
 
 scene.add(light);
@@ -51,6 +55,31 @@ const camera = new THREE.PerspectiveCamera(
 );
 camera.position.z = 10;
 scene.add(camera);
+
+const audioLoader = new THREE.AudioLoader();
+const listener = new THREE.AudioListener();
+const audio = new THREE.Audio(listener);
+
+let userGesture = false;
+
+audioLoader.load("./static/songs/music.mp3", function (buffer) {
+  audio.setBuffer(buffer);
+  audio.setLoop(true);
+  audio.setVolume(0.5); // Adjust the volume as needed
+
+  if (userGesture) {
+    audio.play();
+  } else {
+    document.addEventListener(
+      "mousedown",
+      () => {
+        userGesture = true;
+        audio.play();
+      },
+      { once: true }
+    );
+  }
+});
 
 const renderer = new THREE.WebGLRenderer({ canvas });
 renderer.setSize(sizes.width, sizes.height);
@@ -82,14 +111,13 @@ window.addEventListener("resize", () => {
   renderer.setPixelRatio(Math.min(2, window.devicePixelRatio));
 });
 
-let bool = true;
 
 const animate = () => {
   controls.update();
 
   // Define oscillation parameters
-  const minDisplacementScale = -8;
-  const maxDisplacementScale = -5;
+  const minDisplacementScale = -6;
+  const maxDisplacementScale = 0;
   const oscillationSpeed = 0.0003; // Adjust the speed as needed
 
   // Calculate the oscillating value using a sine function
