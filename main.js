@@ -4,9 +4,9 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import gsap from "gsap";
 
 const textureLoader=new THREE.TextureLoader()
-const cloth = textureLoader.load("textures/cloth.jpg");
-const lava = textureLoader.load("textures/lava.jpg");
-let texture= lava
+
+const texture = textureLoader.load("textures/lava.jpg");
+
 
 texture.minFilter = THREE.NearestFilter;
 texture.magFilter = THREE.NearestFilter;
@@ -25,7 +25,7 @@ const material = new THREE.MeshStandardMaterial({
   roughness: 0.1,
 });
 material.displacementMap = texture;
-material.displacementScale = 0.1;
+material.displacementScale = -6;
 
 const mesh = new THREE.Mesh(
   new THREE.SphereGeometry(3, 64, 64),
@@ -78,12 +78,32 @@ window.addEventListener("resize", () => {
   renderer.setPixelRatio(Math.min(2, window.devicePixelRatio));
 });
 
+let bool = true;
+
 const animate = () => {
   controls.update();
+
+  // Define oscillation parameters
+  const minDisplacementScale = -7;
+  const maxDisplacementScale = 6;
+  const oscillationSpeed = 0.0005; // Adjust the speed as needed
+
+  // Calculate the oscillating value using a sine function
+  const time = performance.now() * oscillationSpeed;
+  const displacementScale =
+    minDisplacementScale +
+    (maxDisplacementScale - minDisplacementScale) * 0.5 * (1 + Math.sin(time));
+
+  // Apply the calculated displacementScale to the material
+  material.displacementScale = displacementScale;
+
+
   renderer.render(scene, camera);
   window.requestAnimationFrame(animate);
 };
 animate();
+
+
 
 const timeline = gsap.timeline({ defaults: { duration: 1 } });
 timeline.fromTo(mesh.scale, { z: 0, x: 0, y: 0 }, { z: 1, x: 1, y: 1 });
@@ -134,6 +154,7 @@ window.addEventListener("keydown", function (event) {
   }else if (event.key === "ArrowDown"){
     material.displacementScale -= 0.06;
   }
+  console.log(material.displacementScale)
 });
 
 document.addEventListener("keydown", function (event) {
@@ -143,18 +164,4 @@ document.addEventListener("keydown", function (event) {
     controls.autoRotateSpeed += 3;
   }
   console.log(controls.autoRotateSpeed)
-});
-
-document.addEventListener("keydown", function (event) {
-  if (event.key === "Enter") {
-    if (texture == lava) {
-      texture = cloth;
-      console.log(1);
-    } else {
-      texture = lava;
-    }
-    material.map = texture;
-    material.needsUpdate = true;
-    renderer.render(scene, camera);
-  }
 });
