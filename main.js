@@ -13,8 +13,6 @@ const cursor={
 }
 
 
-
-
 texture.minFilter = THREE.NearestFilter;
 texture.magFilter = THREE.NearestFilter;
 texture.generateMipmaps = false;
@@ -116,8 +114,8 @@ const animate = () => {
   controls.update();
 
   // Define oscillation parameters
-  const minDisplacementScale = -6;
-  const maxDisplacementScale = 0;
+  const minDisplacementScale = -6.7;
+  const maxDisplacementScale = -5;
   const oscillationSpeed = 0.0003; // Adjust the speed as needed
 
   // Calculate the oscillating value using a sine function
@@ -130,7 +128,7 @@ const animate = () => {
   material.displacementScale = displacementScale;
   
 
-
+  console.log("displacement"+material.displacementScale);
   renderer.render(scene, camera);
   window.requestAnimationFrame(animate);
 };
