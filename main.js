@@ -7,6 +7,10 @@ const textureLoader=new THREE.TextureLoader()
 
 const texture = textureLoader.load("textures/lava.jpg");
 
+const cursor={
+  x:0,
+  y:0
+}
 
 texture.minFilter = THREE.NearestFilter;
 texture.magFilter = THREE.NearestFilter;
@@ -84,9 +88,9 @@ const animate = () => {
   controls.update();
 
   // Define oscillation parameters
-  const minDisplacementScale = -7;
-  const maxDisplacementScale = 6;
-  const oscillationSpeed = 0.0005; // Adjust the speed as needed
+  const minDisplacementScale = -8;
+  const maxDisplacementScale = -5;
+  const oscillationSpeed = 0.0003; // Adjust the speed as needed
 
   // Calculate the oscillating value using a sine function
   const time = performance.now() * oscillationSpeed;
@@ -96,6 +100,7 @@ const animate = () => {
 
   // Apply the calculated displacementScale to the material
   material.displacementScale = displacementScale;
+  
 
 
   renderer.render(scene, camera);
@@ -148,16 +153,6 @@ window.addEventListener("keydown",(event)=>{
   } 
 })
 window.addEventListener("keydown", function (event) {
-  if (event.key === "ArrowUp") {
-    material.displacementScale += 0.06;
-    
-  }else if (event.key === "ArrowDown"){
-    material.displacementScale -= 0.06;
-  }
-  console.log(material.displacementScale)
-});
-
-document.addEventListener("keydown", function (event) {
   if (event.key === "ArrowLeft") {
     controls.autoRotateSpeed-=3
   } else if (event.key === "ArrowRight") {
